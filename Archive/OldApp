@@ -1,0 +1,39 @@
+from flask import Flask, render_template, request
+import pandas as pd
+import plotly.express as px
+
+# Define your CSV file path (replace with the actual path)
+csv_filepath = "/Users/chris/Desktop/Codes/ReportDashboardPython/csv_dashboard/output_cleanfile.csv"
+
+app = Flask(__name__)
+
+# Read the CSV data using pandas
+df = pd.read_csv(csv_filepath)
+
+# Main page with initial visualization
+@app.route("/")
+def dashboard():
+    # Prepare data for the initial chart
+    fig = px.bar(df, x="Company Name", y="2023-11", title="Credits Used by Company",
+                 labels={'2023-11': 'Credits Used'}, color="Company Name")
+
+    # Pass the data and figure to the template
+    return render_template("dashboard.html", data=df.to_json(), fig=fig.to_json())
+
+# Detailed chart when a company name is clicked
+@app.route("/details/<company_name>")
+def details(company_name):
+    # Filter data for the selected company name
+    company_data = df[df['Company Name'] == company_name]
+
+    # Prepare data for the detailed chart
+    fig_details = px.bar(company_data, x="Doc Type Title", y="2023-11",
+                         title=f"Credits Used Breakup for {company_name}",
+                         labels={'Credits Used': 'Credits Used'}, color="Doc Type Title")
+
+    # Pass the data and figure to the template
+    return render_template("details.html", company_name=company_name, data=company_data.to_json(), fig_details=fig_details.to_json())
+
+# Run the development server
+if __name__ == "__main__":
+    app.run(debug=True)

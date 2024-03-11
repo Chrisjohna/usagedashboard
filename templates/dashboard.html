@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Data Dashboard</title>
+
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #4d61fc;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        #plotly-chart {
+            margin-top: 50px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .button-container a {
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar clearfix">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('top10_dashboard') }}">Top 10</a>
+        <a href="{{ url_for('credit_usage') }}">Month Wise</a>
+        <a href="{{ url_for('dashboard') }}">Overview</a>
+    </div>
+
+    <!-- Container for the Plotly chart -->
+    <div id="plotly-chart"></div>
+
+    <!-- Button to navigate to the main dashboard -->
+    <div class="button-container">
+        <a href="{{ url_for('top10_dashboard') }}">View Top 10 Credit Consumers</a>
+        <a href="{{ url_for('credit_usage') }}">See Month Wise Credit</a>
+    </div>
+
+<!-- Container for the Plotly chart -->
+<div id="plotly-chart"></div>
+
+<!-- Dropdown for selecting months -->
+<div style="margin-top: 20px;">
+    <label for="select-month">Select Month:</label>
+    <select id="select-month" onchange="updateChart()">
+        {% for month in df.columns[2:] %}
+            <option value="{{ month }}" {% if selected_month == month %}selected{% endif %}>{{ month }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- Button to navigate to the main dashboard -->
+<!-- <div class="button-container">
+    <a href="{{ url_for('top10_dashboard') }}">View Top 10 Credit Consumers</a>
+    <a href="{{ url_for('credit_usage') }}">See Month Wise Credit</a>
+</div> -->
+
+<!-- Script to render the Plotly chart -->
+<!-- Container for the Plotly chart -->
+<div id="plotly-chart"></div>
+
+<!-- Dropdown for selecting months -->
+<div style="margin-top: 20px;">
+    <label for="select-month">Select Month:</label>
+    <select id="select-month" onchange="updateChart()">
+        {% for month in df.columns[2:] %}
+            <option value="{{ month }}" {% if selected_month == month %}selected{% endif %}>{{ month }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- Button to navigate to the main dashboard -->
+
+<!-- Script to render the Plotly chart -->
+<script>
+    // Load the data and figure from Flask variables
+    var data = {{ data | tojson | safe }};
+    var fig = {{ fig | tojson | safe }};
+
+    // Parse the JSON strings to JavaScript objects
+    var jsonData = JSON.parse(data);
+    var jsonFig = JSON.parse(fig);
+
+    // Function to update chart based on selected month
+    function updateChart() {
+        var selectedMonth = document.getElementById('select-month').value;
+
+        // Filter data based on the selected month
+        var filteredData = jsonData.data.map(function(series) {
+            return {
+                x: series.x,
+                y: series.y.map(function(value, index) {
+                    return jsonData.layout.xaxis.tickvals[index] === selectedMonth ? value : null;
+                }),
+                type: series.type,
+                name: series.name
+            };
+        });
+
+        // Update the Plotly chart
+        Plotly.newPlot('plotly-chart', filteredData, jsonFig.layout);
+    }
+
+    // Render the initial Plotly chart
+    Plotly.newPlot('plotly-chart', jsonFig.data, jsonFig.layout);
+
+    // Add click event to navigate to details page on company name click
+    document.getElementById('plotly-chart').on('plotly_click', function(data){
+        var company_name = data.points[0].x;
+        window.location.href = '/details/' + encodeURIComponent(company_name);
+    });
+</script>
+
+</body>
+
+</html>

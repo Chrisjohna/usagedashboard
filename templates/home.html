@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        
+        body {
+            background-image: url('https://app.docsumo.com/static/images/background.48df26a6085579e09092.png');
+            background-size: 100% 670%;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #fafafa;
+            margin: 0; /* Remove default margin to ensure full-width background */
+            padding: 0; /* Remove default padding */
+        }
+        
+        .content {
+                    text-align: center;
+                    margin-top: 1in; /* Adjust the top margin to shift content lower */
+                    padding: 40px;
+                }
+        
+        a {
+                    text-decoration: none;
+                    padding: 10px 20px;
+                    background-color: #4d61fc;
+                    color: #ffffff;
+                    font-weight: bold;
+                    border-radius: 5px;
+                }
+                .navbar {
+            overflow: hidden;
+            background-color: #4d61fc;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        #plotly-chart {
+            margin-top: 50px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .button-container a {
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+            </style>
+</head>
+<body>
+    <div class="navbar clearfix">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('top10_dashboard') }}">Top 10</a>
+        <a href="{{ url_for('credit_usage') }}">Month Wise</a>
+        <a href="{{ url_for('dashboard') }}">Overview</a>
+    </div>
+    <!-- <h1>Home Page</h1> -->
+
+    <h2>Total Number of Live Customers: {{ total_customers }}</h2>
+    <h2>Total Number of Unique Doc Types : {{ total_doc_titles }}</h2>
+
+    <form action="/home" method="post">
+        <label for="customer_name" style="font-size: 20px">Select Customer:</label>
+        <select name="customer_name" id="customer_name">
+            {% for customer in df['Company Name'].unique() %}
+                <option value="{{ customer }}" {% if selected_customer == customer %}selected{% endif %}>{{ customer }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Add a dropdown for selecting months -->
+        <label  for="selected_month" style="font-size: 20px" >Select Month:</label>
+        <select name="selected_month" id="selected_month">
+            {% for month in df.columns[2:] %}
+                <option value="{{ month }}" {% if selected_month == month %}selected{% endif %}>{{ month }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Show Chart</button>
+    </form>
+
+    {% if chart_json %}
+        <!-- Container for the Plotly chart -->
+        <div id="plotly-chart"></div>
+
+        <!-- Script to render the Plotly chart -->
+        <script>
+            // Load the Plotly chart from JSON
+            var chartJson = {{ chart_json|safe }};
+            Plotly.newPlot('plotly-chart', chartJson.data, chartJson.layout);
+        </script>
+
+        <!-- Download link for filtered data -->
+        <div style="position: absolute; top: 0; right: 0; margin: 10px;">
+            <a href="{{ url_for('download_csv', customer=selected_customer, month=selected_month) }}" style="text-decoration: none; padding: 10px 20px; background-color: #0026ff; color: #fff; font-weight: bold; border-radius: 5px;">Download Filtered Data</a>
+        </div>
+    {% endif %}
+
+</body>
+</html>

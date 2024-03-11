@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usage</title>
+
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <!-- Your HTML content goes here -->
+
+    <div>
+        <h1>Usage Data Dashboard</h1>
+        <p></p>
+    </div>
+
+    <!-- Container for the Plotly chart -->
+    <div id="plotly-chart"></div>
+
+    <!-- Script to render the Plotly chart -->
+    <script>
+        // Load the data and figure from Flask variables
+        var data = {{ data | tojson | safe }};
+        var fig = {{ fig | tojson | safe }};
+
+        // Parse the JSON strings to JavaScript objects
+        var jsonData = JSON.parse(data);
+        var jsonFig = JSON.parse(fig);
+
+        // Render the Plotly chart
+        Plotly.newPlot('plotly-chart', jsonFig.data, jsonFig.layout);
+    </script>
+
+</body>
+</html>

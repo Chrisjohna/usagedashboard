@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details for {{ company_name }}</title>
+
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #4d61fc;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        #plotly-chart {
+            margin-top: 50px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .button-container a {
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar clearfix">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('top10_dashboard') }}">Top 10</a>
+        <a href="{{ url_for('credit_usage') }}">Month Wise</a>
+        <a href="{{ url_for('dashboard') }}">Overview</a>
+    </div>
+
+    <!-- Container for the detailed Plotly chart -->
+    <div id="plotly-chart-details"></div>
+
+    <!-- Script to render the detailed Plotly chart -->
+    <script>
+        // Load the data and figure from Flask variables
+        var data = {{ data | tojson | safe }};
+        var fig_details = {{ fig_details | tojson | safe }};
+
+        // Parse the JSON strings to JavaScript objects
+        var jsonData = JSON.parse(data);
+        var jsonFigDetails = JSON.parse(fig_details);
+
+        // Render the detailed Plotly chart
+        Plotly.newPlot('plotly-chart-details', jsonFigDetails.data, jsonFigDetails.layout);
+    </script>
+
+</body>
+</html>

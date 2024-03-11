@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        
+        body {
+            background-image: url('https://app.docsumo.com/static/images/background.48df26a6085579e09092.png');
+            background-size: 100% 1050%;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #fafafa;
+            margin: 0; /* Remove default margin to ensure full-width background */
+            padding: 0; /* Remove default padding */
+        }
+        a {
+                    text-decoration: none;
+                    padding: 0px 0px;
+                    background-color: #dfdfdf;
+                    color: #4d59e1;
+                    font-weight: bold;
+                    border-radius: 5px;
+                }
+
+        </style>
+</head>
+
+<body>
+    <h1>Login Page</h1>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        {{ form.username }}
+        {{ form.password }}
+        {{ form.submit }}
+    </form>
+
+    <a href="{{ url_for('register') }}">Don't have an account? Sign Up</a>
+</body>
+
+</html>

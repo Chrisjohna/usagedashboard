@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Insights App</title>
+    
+    <style>
+        
+body {
+    background-image: url('https://app.docsumo.com/static/images/background.48df26a6085579e09092.png');
+    background-size: 100% 360%;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #fafafa;
+    margin: 0; /* Remove default margin to ensure full-width background */
+    padding: 0; /* Remove default padding */
+}
+
+        .content {
+            text-align: center;
+            margin-top: 1in; /* Adjust the top margin to shift content lower */
+            padding: 40px;
+        }
+
+        a {
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #4d61fc;
+            color: #ffffff;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<!-- layout.html -->
+{% if current_user.is_authenticated %}
+    <p>Welcome, {{ current_user.username }}! <a href="{{ url_for('logout') }}">Logout</a></p>
+{% else %}
+    <p><a href="{{ url_for('login') }}">Login</a></p>
+{% endif %}
+<!-- base.html -->
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+    <div class="content">
+        <h1>Welcome to Data Insights App</h1>
+        <p>Explore insights into credits used by different companies.</p>
+        <a href="/dashboard">View Insights</a>
+    </div>
+
+</body>
+
+</html>

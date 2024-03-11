@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSV Data Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>My CSV Data Dashboard</h1>
+    <div id="data-table"></div>
+
+    <div id="my-chart"></div>
+
+    <script>
+        // Access the data and figure passed from the Flask app (modify as needed)
+        const data = JSON.parse(document.getElementById("data-table").textContent);
+        const figure = JSON.parse(document.getElementById("my-chart").textContent);
+
+        // Use Plotly to create the chart in the div element
+        var chart = document.getElementById("my-chart");
+        Plotly.newPlot(chart, figure.data, figure.layout);
+
+        // Optionally, display the data in a table using a library like DataTable.js
+    </script>
+</body>
+</html>
